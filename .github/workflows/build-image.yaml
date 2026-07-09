@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-name: Pipeline 1 - Build
-=======
-name: Docker Build and Push
->>>>>>> 130567e79828752fc6d9908106d43a2cb25f52f0
+name: Pipeline 1 - Docker build and push
 
 on:
   push:
@@ -10,37 +6,15 @@ on:
       - dev
 
 jobs:
-<<<<<<< HEAD
-  build:
-    runs-on: self-hosted
-    outputs:
-      image_tag: ${{ steps.tag.outputs.tag }}
-=======
   build-and-push:
     runs-on: ubuntu-latest
->>>>>>> 130567e79828752fc6d9908106d43a2cb25f52f0
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-<<<<<<< HEAD
-      - name: Set image tag
-        id: tag
-        run: echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT
-
       - name: Build artifact
         run: npm install
 
-      - name: Login to Nexus
-        run: echo "${{ secrets.NEXUS_PASSWORD }}" | docker login localhost:8082 -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
-
-      - name: Build Docker image
-        run: docker build -t localhost:8082/hotel-backend:${{ steps.tag.outputs.tag }} .
-
-      - name: Push Docker image
-        run: docker push localhost:8082/hotel-backend:${{ steps.tag.outputs.tag }}
-=======
       - name: Login to Nexus Docker Registry
         run: echo ${{ secrets.NEXUS_PASSWORD }} | docker login ${{ secrets.NEXUS_REGISTRY }} -u ${{ secrets.NEXUS_USERNAME }} --password-stdin
 
@@ -49,5 +23,3 @@ jobs:
 
       - name: Push Docker image to Nexus
         run: docker push nexus.local:8082/backend:dev
-       
->>>>>>> 130567e79828752fc6d9908106d43a2cb25f52f0
