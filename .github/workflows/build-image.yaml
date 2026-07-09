@@ -22,4 +22,4 @@ jobs:
       - name: Push Docker image to Nexus
         run: docker push ${{ secrets.NEXUS_REGISTRY }}/backend:dev
 
-        # The code snippet provided is a GitHub Actions workflow configuration file for building and pushing a Docker image to a Nexus Docker Registry. It is triggered on pushes to the 'dev' branch. The workflow includes steps for checking out the code, logging into the Nexus registry, building the Docker image, and pushing it to the registry.
+        # tThe code snippet provided is a GitHub Actions workflow configuration file for building and pushing a Docker image to a Nexus Docker Registry. It is triggered on pushes to the 'dev' branch. The workflow includes steps for checking out the code, logging into the Nexus registry, building the Docker image, and pushing it to the registry.
