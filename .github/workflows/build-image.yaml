@@ -8,18 +8,16 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Build artifact
-        run: npm install
 
       - name: Login to Nexus Docker Registry
         run: echo ${{ secrets.NEXUS_PASSWORD }} | docker login ${{ secrets.NEXUS_REGISTRY }} -u ${{ secrets.NEXUS_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t nexus.local:8082/backend:dev .
+        run: docker build -t "{{ secrets.NEXUS_REGISTRY }}/backend:dev" .
 
       - name: Push Docker image to Nexus
-        run: docker push nexus.local:8082/backend:dev
+        run: docker push ${{ secrets.NEXUS_REGISTRY }}/backend:dev
