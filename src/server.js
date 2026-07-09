@@ -15,7 +15,7 @@ console.log(require("./routes/reservations"));
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
+// MongoDB connection - yes
 mongoose.connect("mongodb://localhost:27017/hotelapp")
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
