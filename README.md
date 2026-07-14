@@ -3,6 +3,7 @@ backend-repo
 
 Verification:
 1. Trigger validation
+ Need to confirm that the secret params in the build-image workflow are stored correctly in the GitHub reo secrets
  Confirm the workflow starts when code is pushed to the dev branch.
  Command to verify:
   git checkout dev
