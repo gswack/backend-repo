@@ -3,7 +3,7 @@ name: Pipeline 2 - Deployment Preparation
 on:
   workflow_run:
     workflows:
-      - "Pipeline 1 - Build"
+      - "Pipeline 1 - Docker build and push"
     types:
       - completed
 

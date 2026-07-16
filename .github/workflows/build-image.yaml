@@ -14,12 +14,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to Nexus Docker Registry
-        run: echo ${{ secrets.NEXUS_PASSWORD }} | docker login ${{ secrets.NEXUS_REGISTRY }} -u ${{ secrets.NEXUS_USERNAME }} --password-stdin
+        run: |
+          echo "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
 
       - name: Build Docker image
-        run: docker build -t "{{ secrets.NEXUS_REGISTRY }}/backend:dev" .
+        run: docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:dev" .
 
       - name: Push Docker image to Nexus
-        run: docker push ${{ secrets.NEXUS_REGISTRY }}/backend:dev
+        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:dev"
 
-        # tThe code snippet provided is a GitHub Actions workflow configuration file for building and pushing a Docker image to a Nexus Docker Registry. It is triggered on pushes to the 'dev' branch. The workflow includes steps for checking out the code, logging into the Nexus registry, building the Docker image, and pushing it to the registry.
+      - name: Verify image exists
+        run: docker images | grep backend
