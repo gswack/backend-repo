@@ -31,3 +31,5 @@ Verification:
   docker run -d -p 3000:3000 --name backend-test <nexus-registry>/backend:dev
   curl http://localhost:3000/hotels
   docker rm -f backend-test
+
+  TEST GITHUB ACTIONS
