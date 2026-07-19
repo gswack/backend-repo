@@ -32,4 +32,5 @@ Verification:
   curl http://localhost:3000/hotels
   docker rm -f backend-test
 
-  TEST GITHUB ACTION
+  TEST GITHUB ACTIOs:wq
+
