@@ -32,4 +32,4 @@ Verification:
   curl http://localhost:3000/hotels
   docker rm -f backend-test
 
-  TEST GITHUB ACTIONS
+  TEST GITHUB ACTION
