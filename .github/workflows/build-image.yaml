@@ -13,6 +13,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         
+        # Debugging purposes, show the nexus registry secret value (masked in logs)
+      - name: Show registry
+        run: |
+          echo "Registry: '${{ secrets.NEXUS_REGISTRY }}'"
 
       - name: Login to Nexus Docker Registry
         run: |
