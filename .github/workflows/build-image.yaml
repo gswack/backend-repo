@@ -18,6 +18,13 @@ jobs:
         run: |
           echo "Registry: '${{ secrets.NEXUS_REGISTRY }}'"
 
+        # Debug: show the runner user and docker context to ensure it's running in the expected environment
+      - name: Debug runner
+        run: |
+          whoami
+          docker context show
+          docker info | findstr "Insecure"
+
       - name: Login to Nexus Docker Registry
         run: |
           echo "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
