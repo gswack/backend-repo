@@ -53,10 +53,16 @@ jobs:
         #   echo "admin123" | docker login host.docker.internal:8082 -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
 
       - name: Login to Nexus Docker Registry
+        shell: cmd
         run: |
+          echo %NEXUS_PASSWORD% | docker login %NEXUS_REGISTRY% -u %NEXUS_USERNAME% --password-stdin
+        env:
+          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           # echo docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
           # docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
-           Write-Output "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
+          Write-Output "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
 
       - name: Build Docker image
         run: docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:dev" .
