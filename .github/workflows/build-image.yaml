@@ -56,7 +56,7 @@ jobs:
         run: |
           echo docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
           docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
-          # echo "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
+          echo "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
 
       - name: Build Docker image
         run: docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:dev" .
