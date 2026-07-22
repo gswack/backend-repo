@@ -14,49 +14,47 @@ jobs:
         uses: actions/checkout@v4
         
         # Debugging purposes, show the nexus registry secret value (masked in logs)
-      - name: Show registry
-        run: |
-          echo "Registry: '${{ secrets.NEXUS_REGISTRY }}'"
+      # - name: Show registry
+      #   run: |
+      #     echo "Registry: '${{ secrets.NEXUS_REGISTRY }}'"
 
-        # Debug: show the runner user and docker context to ensure it's running in the expected environment
-      - name: Debug runner
-        run: |
-          whoami
-          docker context show
-          docker info | findstr "Insecure"
+      #   # Debug: show the runner user and docker context to ensure it's running in the expected environment
+      # - name: Debug runner
+      #   run: |
+      #     whoami
+      #     docker context show
+      #     docker info | findstr "Insecure"
 
-      - name: Debug registry
-        run: |
-          echo "${{ secrets.NEXUS_REGISTRY }}" | Out-File registry.txt
-          Get-Content registry.txt
+      # - name: Debug registry
+      #   run: |
+      #     echo "${{ secrets.NEXUS_REGISTRY }}" | Out-File registry.txt
+      #     Get-Content registry.txt
 
-      - name: Debug username
-        run: |
-          echo "Username length:"
-          echo "${{ secrets.NEXUS_USERNAME }}".Length
+      # - name: Debug username
+      #   run: |
+      #     echo "Username length:"
+      #     echo "${{ secrets.NEXUS_USERNAME }}".Length
 
-      - name: Check secret lengths
-        shell: powershell
-        run: |
-          Write-Host "Username length: $($env:NEXUS_USERNAME.Length)"
-          Write-Host "Password length: $($env:NEXUS_PASSWORD.Length)"
-          Write-Host "Registry length: $($env:NEXUS_REGISTRY.Length)"
-        env:
-          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
+      # - name: Check secret lengths
+      #   shell: powershell
+      #   run: |
+      #     Write-Host "Username length: $($env:NEXUS_USERNAME.Length)"
+      #     Write-Host "Password length: $($env:NEXUS_PASSWORD.Length)"
+      #     Write-Host "Registry length: $($env:NEXUS_REGISTRY.Length)"
+      #   env:
+      #     NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+      #     NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      #     NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
-      - name: Test Nexus login
-        shell: powershell
-        run: |
-          docker logout host.docker.internal:8082
-          docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
+      # - name: Test Nexus login
+      #   shell: powershell
+      #   run: |
+      #     docker logout host.docker.internal:8082
+      #     docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
 
       - name: Login to Nexus Docker Registry
         run: |
-          docker login "${{ secrets.NEXUS_REGISTRY }}" \
-          -u "${{ secrets.NEXUS_USERNAME }}" \
-          -p "${{ secrets.NEXUS_PASSWORD }}"
+          docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
 
       - name: Build Docker image
         run: docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:dev" .
