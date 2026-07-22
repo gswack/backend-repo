@@ -40,9 +40,11 @@ jobs:
         run: |
           Write-Host "Username length: $($env:NEXUS_USERNAME.Length)"
           Write-Host "Password length: $($env:NEXUS_PASSWORD.Length)"
+          Write-Host "Registry length: $($env:NEXUS_REGISTRY.Length)"
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
       # - name: Test Nexus login
         # shell: powershell
@@ -50,9 +52,9 @@ jobs:
         #   docker logout host.docker.internal:8082
         #   echo "admin123" | docker login host.docker.internal:8082 -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
 
-      # - name: Login to Nexus Docker Registry
-        # run: |
-          # echo "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
+      - name: Login to Nexus Docker Registry
+        run: |
+          echo "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
 
       - name: Build Docker image
         run: docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:dev" .
