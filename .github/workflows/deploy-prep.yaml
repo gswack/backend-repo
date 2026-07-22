@@ -19,6 +19,7 @@ jobs:
           repository: gswack/infra-repo
           token: ${{ secrets.PIPELINE_TOKEN }}
           ref: dev
+          path: infra-repo
 
       - name: Get image tag
         id: tag
