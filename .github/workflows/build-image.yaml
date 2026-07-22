@@ -54,7 +54,7 @@ jobs:
 
       - name: Login to Nexus Docker Registry
         run: |
-          docker login "${{ secrets.NEXUS_REGISTRY }}" -u admin -p admin123
+          docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p admin123
           # echo "${{ secrets.NEXUS_PASSWORD }}" | docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
 
       - name: Build Docker image
