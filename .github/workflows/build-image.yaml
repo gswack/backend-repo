@@ -40,6 +40,14 @@ jobs:
         run: |
           docker logout host.docker.internal:8082
           echo "${{ secrets.NEXUS_PASSWORD }}" | docker login host.docker.internal:8082 -u "${{ secrets.NEXUS_USERNAME }}" --password-stdin
+      - name: Check secret lengths
+        shell: powershell
+        run: |
+          Write-Host "Username length: $($env:NEXUS_USERNAME.Length)"
+          Write-Host "Password length: $($env:NEXUS_PASSWORD.Length)"
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
 
       - name: Login to Nexus Docker Registry
         run: |
