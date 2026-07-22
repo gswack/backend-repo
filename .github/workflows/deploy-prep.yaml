@@ -19,6 +19,7 @@ jobs:
           repository: gswack/infra-repo
           token: ${{ secrets.PIPELINE_TOKEN }}
           ref: dev
+          path: infra-repo
 
       - name: Get image tag
         id: tag
@@ -26,12 +27,14 @@ jobs:
 
       - name: Update image tag in deployment.yaml
         run: |
-          (Get-Content kubernetes/volumes/k8s/backend/deployment.yaml) `
-          -replace 'image:\s*host\.docker\.internal:8082/backend:.*', 'image: host.docker.internal:8082/backend:${{ steps.tag.outputs.tag }}' `
-          | Set-Content kubernetes/volumes/k8s/backend/deployment.yaml
+          (Get-Content infra-repo/kubernetes/volumes/k8s/backend/deployment.yaml) `
+          -replace 'host\.docker\.internal:8082/backend:.*', 'host.docker.internal:8082/backend:${{ steps.tag.outputs.tag }}' `
+          | Set-Content infra-repo/kubernetes/volumes/k8s/backend/deployment.yaml
 
       - name: Commit and push changes
         run: |
+          cd infra-repo
+          git config --global --add safe.directory "$pwd"
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add kubernetes/volumes/k8s/backend/deployment.yaml
