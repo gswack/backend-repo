@@ -45,7 +45,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PIPELINE_TOKEN }}
         run: |
-          gh pr create `  # using the GitHub CLI to create a pull request
+          # using the GitHub CLI to create a pull request
+          gh pr create `  
             --repo gswack/infra-repo `
             --base main `
             --head dev `
