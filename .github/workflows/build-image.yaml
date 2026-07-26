@@ -64,10 +64,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:${{ steps.image.outputs.tag }}" .
+          docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:latest" .
 
       - name: Push Docker image to Nexus
-        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:${{ steps.image.outputs.tag }}"
+        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:latest"
 
       - name: Verify image exists
         run: |
