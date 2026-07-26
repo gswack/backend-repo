@@ -32,5 +32,6 @@ Verification:
   curl http://localhost:3000/hotels
   docker rm -f backend-test
 
-  TEST GITHUB ACTIOns - pipelines 1 and 2
+  TEST GITHUB ACTIOns - pipelines 1 and 2. test 35
+  
 
