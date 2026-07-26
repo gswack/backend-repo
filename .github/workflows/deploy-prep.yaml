@@ -34,6 +34,13 @@ jobs:
         run: |
           echo "Tag = '${{ steps.tag.outputs.tag }}'"
 
+      - name: Debug workspace
+        shell: powershell
+        run: |
+          pwd
+          Get-ChildItem
+          Get-ChildItem -Recurse -Depth 3
+
       - name: Update image tag in deployment.yaml
         shell: powershell
         run: |
