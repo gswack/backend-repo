@@ -44,9 +44,9 @@ jobs:
       - name: Update image tag in deployment.yaml
         shell: powershell
         run: |
-          (Get-Content infra-repo/kubernetes/volumes/k8s/backend/deployment.yaml) `
+          (Get-Content infra-repo/kubernetes/backend/backend-deployment.yaml) `
           -replace 'host\.docker\.internal:8082/backend:.*', 'host.docker.internal:8082/backend:${{ steps.tag.outputs.tag }}' `
-          | Set-Content infra-repo/kubernetes/volumes/k8s/backend/deployment.yaml
+          | Set-Content infra-repo/kubernetes/backend/backend-deployment.yaml
 
       - name: Commit and push changes
         shell: powershell
@@ -55,7 +55,7 @@ jobs:
           git config --global --add safe.directory "$pwd"
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add kubernetes/volumes/k8s/backend/deployment.yaml
+          git add kubernetes/backend/backend-deployment.yaml
           git commit -m "Update backend image tag to ${{ steps.tag.outputs.tag }}"
           git push origin dev
 
