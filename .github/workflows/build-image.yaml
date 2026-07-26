@@ -12,8 +12,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
-        # Debugging purposes, show the nexus registry secret value (masked in logs)
+
+      - name: Get Image Tag
+        id: image
+        shell: powershell
+        run: |
+          "tag=${{ github.sha }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+          # Debugging purposes, show the nexus registry secret value (masked in logs)
       # - name: Show registry
       #   run: |
       #     echo "Registry: '${{ secrets.NEXUS_REGISTRY }}'"
@@ -57,10 +63,12 @@ jobs:
           docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
 
       - name: Build Docker image
-        run: docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:dev" .
+        run: |
+          docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:${{ steps.image.outputs.tag }}" .
 
       - name: Push Docker image to Nexus
-        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:dev"
+        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:${{ steps.image.outputs.tag }}"
 
       - name: Verify image exists
-        run: docker images | Select-String "backend"
+        run: |
+          docker images | Select-String "${{ steps.image.outputs.tag }}"
