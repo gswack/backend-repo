@@ -60,7 +60,7 @@ jobs:
         shell: powershell
         run: |
           (Get-Content infra-repo/kubernetes/backend/backend-deployment.yaml) `
-          -replace 'host\.docker\.internal:8082/backend:.*', 'host.docker.internal:8082/backend:latest' `
+          -replace 'host\.docker\.internal:8082/backend:.*', 'host.docker.internal:8082/backend:418f2d9b7a38b63576893e970c91c2c95f3fa33e' `
           | Set-Content infra-repo/kubernetes/backend/backend-deployment.yaml
 
       - name: Commit and push changes
@@ -71,7 +71,7 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add kubernetes/backend/backend-deployment.yaml
-          git commit -m "Update backend image tag to latest"
+          git commit -m "Update backend image tag to SHA tag"
           git push origin dev
 
       - name: Open Pull Request
@@ -80,7 +80,7 @@ jobs:
           GH_TOKEN: ${{ secrets.PIPELINE_TOKEN }}
         run: |
           # using the GitHub CLI to create a pull request
-          gh pr create --repo gswack/infra-repo --base main --head dev --title "Deploy backend latest" --body "Automated PR: update backend image tag to latest"
+          gh pr create --repo gswack/infra-repo --base main --head dev --title "Deploy backend 418f2d9b7a38b63576893e970c91c2c95f3fa33e" --body "Automated PR: update backend image tag to latest"
         #       uses: repo-sync/pull-request@v2
         # with:
         #   source_branch: dev
