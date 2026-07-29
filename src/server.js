@@ -15,8 +15,8 @@ console.log(require("./routes/reservations"));
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection - yes
-mongoose.connect("mongodb://localhost:27017/hotelapp")
+// MongoDB connection - using environment variable for the connection string
+mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
 
