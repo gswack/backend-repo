@@ -55,3 +55,5 @@ jobs:
           gh pr merge $PR_NUMBER --repo gswack/infra-repo --merge --admin
         env:
           GH_TOKEN: ${{ secrets.PIPELINE_TOKEN }}
+
+          
