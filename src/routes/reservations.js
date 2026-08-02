@@ -17,15 +17,14 @@ router.post("/", async (req, res) => {
   }
 });
 
-
 // Reservation Lookup
 router.get("/lookup", async (req, res) => {
-  const { query } = req.query;
+  const { query } = req.query.query.trim();
 
   const reservation = await Reservation.findOne({
     $or: [
-      { fullName: query },
-      { email: query }
+      { fullName: { $regex: new RegExp(`^${query}$`, "i") } },
+      { email: { $regex: new RegExp(`^${query}$`, "i") } }
     ]
   });
 
@@ -35,7 +34,6 @@ router.get("/lookup", async (req, res) => {
 
   res.json({ found: true, reservation });
 });
-
 
 // Cancel reservation
 router.delete("/:id", async (req, res) => {
