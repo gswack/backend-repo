@@ -19,31 +19,44 @@ router.post("/", async (req, res) => {
 
 // Reservation Lookup
 router.get("/lookup", async (req, res) => {
-  const { query } = req.query.query.trim();
-
-  const reservation = await Reservation.findOne({
-    $or: [
-      { fullName: { $regex: new RegExp(`^${query}$`, "i") } },
-      { email: { $regex: new RegExp(`^${query}$`, "i") } }
-    ]
-  });
-
-  if (!reservation) {
-    return res.json({ found: false });
+  try {
+    const query = (req.query.query || "").trim();
+    if (!query) {
+      return res.status(400).json({
+        error: "Search query is required"
+      });
   }
 
-  res.json({ found: true, reservation });
+    const reservation = await Reservation.findOne({
+      $or: [
+        { fullName: { $regex: new RegExp(`^${query}$`, "i") } },
+        { email: { $regex: new RegExp(`^${query}$`, "i") } }
+      ]
+    });
+
+    if (!reservation) {
+      return res.json({ found: false });
+    }
+
+    res.json({ found: true, reservation });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Cancel reservation
 router.delete("/:id", async (req, res) => {
-  const deleted = await Reservation.findByIdAndDelete(req.params.id);
+  try {
+    const deleted = await Reservation.findByIdAndDelete(req.params.id);
 
   if (!deleted) {
     return res.status(404).json({ error: "Reservation not found." });
   }
 
-  res.json({ message: "Reservation canceled successfully." });
-});
+    res.json({ message: "Reservation canceled successfully." });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}); 
 
 module.exports = router;
