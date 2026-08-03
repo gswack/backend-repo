@@ -65,10 +65,10 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:v6" .
+          docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:v7" .
 
       - name: Push Docker image to Nexus
-        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:v6"
+        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:v7"
 
       - name: Verify image exists
         run: |
