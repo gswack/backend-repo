@@ -42,12 +42,6 @@ jobs:
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
-      # - name: Debug runner
-      #   run: |
-      #     whoami
-      #     docker context show
-      #     docker info | findstr "Insecure"
-
       - name: Debug registry
         run: |
           echo "${{ secrets.NEXUS_REGISTRY }}" | Out-File registry.txt
