@@ -22,6 +22,8 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection - using environment variable for the connection string
+console.log(process.env.MONGO_URI);
+console.log(process.env.MONGO_URL);
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log(err));
@@ -30,4 +32,4 @@ mongoose.connect(process.env.MONGO_URI)
 app.use("/hotels", require("./routes/hotels"));
 app.use("/reservations", require("./routes/reservations"));
 
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(3001, () => console.log("Server running on port 3001"));
