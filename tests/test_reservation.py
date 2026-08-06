@@ -1,15 +1,14 @@
 import requests
 
 
-BASE_URL = "http://localhost:3000"
+BASE_URL = "https://hotel.gswack.com"
 
 
 def test_create_reservation():
-
     payload = {
+        "hotelId": "5",
         "fullName": "Test User3",
         "email": "test3@test.com",
-        "hotelId": "1",
         "checkIn": "2026-08-04",
         "checkOut": "2026-08-05"
     }
@@ -20,5 +19,5 @@ def test_create_reservation():
     )
 
     assert response.status_code == 200
-    assert "reservation" in response.json()
+    assert "successfully" in response.json()
     

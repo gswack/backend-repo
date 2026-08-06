@@ -57,6 +57,15 @@ jobs:
         run: |
           docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
 
+      # Pytest
+      - name: Install test dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run pytest
+        run: |
+          pytest -vv
+
       - name: Build Docker image
         run: |
           docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:${{ steps.image.outputs.tag }}" .
