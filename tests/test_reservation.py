@@ -14,7 +14,7 @@ def test_create_reservation():
     }
 
     response = requests.post(
-        f"{BASE_URL}/reservations",
+        f"{BASE_URL}",
         json=payload
     )
 
