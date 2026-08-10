@@ -1,3 +1,4 @@
+const fs = require('fs');
 const crypto = require("node:crypto");
 
 if (!global.crypto) {
@@ -18,15 +19,20 @@ console.log(require.resolve("./routes/hotels"));
 console.log(require.resolve("./routes/reservations"));
 console.log(require("./routes/hotels"));
 console.log(require("./routes/reservations"));
+
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection - using environment variable for the connection string
-console.log(process.env.MONGO_URI);
-console.log(process.env.MONGO_URL);
-mongoose.connect(process.env.MONGO_URI)
+// MongoDB connection from OpenBao secret
+const mongoUri = fs
+  .readFileSync('/vault/secrets/mongo-uri', 'utf8')
+  .trim();
+
+console.log("MongoDB URI loaded from OpenBao");
+
+mongoose.connect(mongoUri)
   .then(() => console.log("MongoDB connected"))
-  .catch(err => console.log(err));
+  .catch((err) => console.error("MongoDB connection failed:", err));
 
 // Routes
 app.use("/hotels", require("./routes/hotels"));
