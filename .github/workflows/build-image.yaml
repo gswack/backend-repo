@@ -23,20 +23,60 @@ jobs:
         uses: astral-sh/setup-uv@v5
         with:
           version: "latest"
-          enable-cache: true
+          enable-cache: false
           python-version: ${{ matrix.python-version }}
 
       # Install project dependencies into the virtual environment
       # - name: Install dependencies
       #   run: uv sync --all-extras --dev
+  # Stage 1
+  build-artifacts:
+    name: Build Application Artifacts
+    runs-on: ubuntu-latest
 
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build application
+        run: |
+          mkdir -p artifact
+          cp -r src artifact/
+          cp package.json package-lock.json artifact/
+
+      - name: Upload application artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hotel-backend-artifact
+          path: artifact/
+
+  # Stage 2
   build-and-push:
     name: Build and Push Docker Image
+    needs: build-artifacts
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Download application artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: hotel-backend-artifact
+          path: artifact
 
       - name: Get Image Tag
         id: image
@@ -46,8 +86,9 @@ jobs:
         # Debugging purposes, show the nexus registry secret value (masked in logs)
       - name: Debug registry
         run: |
-          echo "${{ secrets.NEXUS_REGISTRY }}" > registry.txt
-          cat registry.txt
+          echo "Registry: ${NEXUS_REGISTRY}"
+        env:
+          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
       - name: Debug username length
         run: |
@@ -75,18 +116,31 @@ jobs:
       #     docker logout host.docker.internal:8082
       #     docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
 
+      - name: Test Nexus connectivity
+        run: |
+          curl -vk https://nexus.gswack.com/v2/
+
       - name: Login to Nexus Docker Registry
         run: |
-          docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
+          docker login "${NEXUS_REGISTRY}" \
+          --username "${NEXUS_USERNAME}" \
+          --password "${NEXUS_PASSWORD}"
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
       - name: Build Docker image
         run: |
-          docker build -t "${{ secrets.NEXUS_REGISTRY }}/backend:${{ steps.image.outputs.tag }}" .
+          docker build -t "${NEXUS_REGISTRY}/backend:${{ steps.image.outputs.tag }}" .
+        env:
+          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
       - name: Push Docker image to Nexus
-        run: docker push "${{ secrets.NEXUS_REGISTRY }}/backend:${{ steps.image.outputs.tag }}"
+        run: docker push "${NEXUS_REGISTRY}/backend:${{ steps.image.outputs.tag }}"
+        env:
+          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
       - name: Verify image exists
         run: |
           docker images | grep "${{ steps.image.outputs.tag }}"
-          
