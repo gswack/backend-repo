@@ -27,8 +27,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       # Install project dependencies into the virtual environment
-      - name: Install dependencies
-        run: uv sync --all-extras --dev
+      # - name: Install dependencies
+      #   run: uv sync --all-extras --dev
 
   build-and-push:
     name: Build and Push Docker Image
@@ -40,56 +40,44 @@ jobs:
 
       - name: Get Image Tag
         id: image
-        shell: powershell
         run: |
-          "tag=${{ github.sha }}" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT
 
-          # Debugging purposes, show the nexus registry secret value (masked in logs)
-      
+        # Debugging purposes, show the nexus registry secret value (masked in logs)
       - name: Debug registry
         run: |
-          echo "${{ secrets.NEXUS_REGISTRY }}" | Out-File registry.txt
-          Get-Content registry.txt
+          echo "${{ secrets.NEXUS_REGISTRY }}" > registry.txt
+          cat registry.txt
 
-      - name: Debug username
+      - name: Debug username length
         run: |
-          echo "Username length:"
-          echo "${{ secrets.NEXUS_USERNAME }}".Length
+          echo "Username length: ${#NEXUS_USERNAME}"
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
 
       - name: Check secret lengths
-        shell: powershell
         run: |
-          Write-Host "Username length: $($env:NEXUS_USERNAME.Length)"
-          Write-Host "Password length: $($env:NEXUS_PASSWORD.Length)"
-          Write-Host "Registry length: $($env:NEXUS_REGISTRY.Length)"
+          echo "Username length: ${#NEXUS_USERNAME}"
+          echo "Password length: ${#NEXUS_PASSWORD}"
+          echo "Registry length: ${#NEXUS_REGISTRY}"
         env:
           NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
-      - name: Debug registry
-        run: |
-          echo "${{ secrets.NEXUS_REGISTRY }}" | Out-File registry.txt
-          Get-Content registry.txt
+      # - name: Debug registry
+      #   run: |
+      #     echo "${{ secrets.NEXUS_REGISTRY }}" | Out-File registry.txt
+      #     Get-Content registry.txt
 
-      - name: Test Nexus login
-        shell: powershell
-        run: |
-          docker logout host.docker.internal:8082
-          docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
+      # - name: Test Nexus login
+      #   run: |
+      #     docker logout host.docker.internal:8082
+      #     docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
 
       - name: Login to Nexus Docker Registry
         run: |
           docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
-
-      # Pytest
-      # - name: Install test dependencies
-      #   run: |
-      #     pip install -r requirements.txt
-
-      # - name: Run pytest
-      #   run: |
-      #     pytest -vv
 
       - name: Build Docker image
         run: |
@@ -100,5 +88,5 @@ jobs:
 
       - name: Verify image exists
         run: |
-          docker images | Select-String "${{ steps.image.outputs.tag }}"
+          docker images | grep "${{ steps.image.outputs.tag }}"
           
