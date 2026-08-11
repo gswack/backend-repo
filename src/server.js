@@ -23,20 +23,20 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection from OpenBao secret
+// MongoDB connection from Vault secret
 const mongoSecretPath = "/vault/secrets/mongo-uri";
 if (!fs.existsSync(mongoSecretPath)) {
-  console.error(`OpenBao secret not found: ${mongoSecretPath}`);
+  console.error(`Vault secret not found: ${mongoSecretPath}`);
   process.exit(1);
 }
 
 const mongoUri = fs.readFileSync(mongoSecretPath, 'utf8').trim();
 if (!mongoUri) {
-  console.error("OpenBao MongoDB URI is empty");
+  console.error("Vault MongoDB URI is empty");
   process.exit(1);
 }
 
-console.log("MongoDB URI loaded from OpenBao");
+console.log("MongoDB URI loaded from Vault secret");
 
 mongoose.connect(mongoUri)
   .then(() => console.log("MongoDB connected"))
