@@ -6,8 +6,33 @@ on:
       - dev
 
 jobs:
+  # TODO : Add a test job to run pytest before building and pushing the Docker image
+  test:
+    name: Run Pytest
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.11, 3.12, 3.13, 3.14]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install uv and set up automated caching + Python version
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+
+      # Install project dependencies into the virtual environment
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
   build-and-push:
-    runs-on: self-hosted
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code

@@ -5,6 +5,8 @@ if (!global.crypto) {
   global.crypto = crypto;
 }
 
+const winston = require("winston");
+const LokiTransport = require("winston-loki");
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
@@ -54,6 +56,37 @@ mongoose.connect(process.env.MONGO_URI)
 //     console.error("MongoDB connection failed:", err);
 //     process.exit(1);
 //   });
+
+
+// Winston logger
+const logger = winston.createLogger({
+    level: "info",
+
+    transports: [
+        new winston.transports.Console(),
+
+        new LokiTransport({
+            host: process.env.LOKI_HOST,
+            labels: {
+                app: "express-app"
+            },
+            json: true,
+            batching: false
+        })
+    ]
+});
+
+// Express logging middleware
+app.use((req, res, next) => {
+    logger.info(`${req.method} ${req.url}`);
+    next();
+});
+
+// Routes
+app.get("/", (req, res) => {
+    logger.info("Home page requested");
+    res.send("Hello World!");
+});
 
 // Routes
 app.use("/hotels", require("./routes/hotels"));
