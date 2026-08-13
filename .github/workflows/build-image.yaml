@@ -115,17 +115,23 @@ jobs:
 
       - name: Test Nexus connectivity
         run: |
-          curl -vk https://nexus.gswack.com/v2/
+            STATUS=$(curl -ks -o /dev/null -w "%{http_code}" https://nexus.gswack.com/v2/)
+            echo "Nexus returned HTTP $STATUS"
 
-      - name: Login to Nexus Docker Registry
-        run: |
-          docker login "${NEXUS_REGISTRY}" \
-          --username "${NEXUS_USERNAME}" \
-          --password "${NEXUS_PASSWORD}"
-        env:
-          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
+            if [ "$STATUS" != "401" ]; then
+              echo "Unexpected Nexus response"
+              exit 1
+            fi
+
+      # - name: Login to Nexus Docker Registry
+      #   run: |
+      #     docker login "${NEXUS_REGISTRY}" \
+      #     --username "${NEXUS_USERNAME}" \
+      #     --password "${NEXUS_PASSWORD}"
+      #   env:
+      #     NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+      #     NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+      #     NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
       - name: Build Docker image
         run: |
