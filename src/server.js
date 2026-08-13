@@ -1,4 +1,4 @@
-// const fs = require('fs');
+const fs = require('fs');
 const crypto = require("node:crypto");
 
 if (!global.crypto) {
@@ -26,36 +26,34 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection - using environment variable for the connection string
-console.log(process.env.MONGO_URI);
-console.log(process.env.MONGO_URL);
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => {
-    console.error("MongoDB connection failed:", err);
-    process.exit(1);
-  });
-
-// MongoDB connection from Vault secret
-// const mongoSecretPath = "/vault/secrets/mongo-uri";
-// if (!fs.existsSync(mongoSecretPath)) {
-//   console.error(`Vault secret not found: ${mongoSecretPath}`);
-//   process.exit(1);
-// }
-
-// const mongoUri = fs.readFileSync(mongoSecretPath, 'utf8').trim();
-// if (!mongoUri) {
-//   console.error("Vault MongoDB URI is empty");
-//   process.exit(1);
-// }
-
-// console.log("MongoDB URI loaded from Vault secret");
-
-// mongoose.connect(mongoUri)
+console.log("MongoDB URI loaded from OpenBao");
+// // mongoose.connect(process.env.MONGO_URI)
 //   .then(() => console.log("MongoDB connected"))
 //   .catch((err) => {
 //     console.error("MongoDB connection failed:", err);
 //     process.exit(1);
 //   });
+
+// MongoDB connection from Vault secret
+const mongoSecretPath = "/vault/secrets/mongo-uri";
+if (!fs.existsSync(mongoSecretPath)) {
+  console.error(`Vault secret not found: ${mongoSecretPath}`);
+  process.exit(1);
+}
+
+const mongoUri = fs.readFileSync(mongoSecretPath, 'utf8').trim();
+if (!mongoUri) {
+  console.error("Vault MongoDB URI is empty");
+  process.exit(1);
+}
+
+console.log("MongoDB URI loaded from OpenBao");
+mongoose.connect(mongoUri)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => {
+    console.error("MongoDB connection failed:", err);
+    process.exit(1);
+  });
 
 
 // Winston logger
