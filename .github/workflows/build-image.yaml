@@ -103,35 +103,25 @@ jobs:
           NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
           NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
-      # - name: Debug registry
-      #   run: |
-      #     echo "${{ secrets.NEXUS_REGISTRY }}" | Out-File registry.txt
-      #     Get-Content registry.txt
+      - name: Test Nexus connectivity
+        run: |
+            STATUS=$(curl -ks -o /dev/null -w "%{http_code}" https://nexus.gswack.com/v2/)
+            echo "Nexus returned HTTP $STATUS"
 
-      # - name: Test Nexus login
-      #   run: |
-      #     docker logout host.docker.internal:8082
-      #     docker login "${{ secrets.NEXUS_REGISTRY }}" -u "${{ secrets.NEXUS_USERNAME }}" -p "${{ secrets.NEXUS_PASSWORD }}"
+            if [ "$STATUS" != "401" ]; then
+              echo "Unexpected Nexus response"
+              exit 1
+            fi
 
-      # - name: Test Nexus connectivity
-      #   run: |
-      #       STATUS=$(curl -ks -o /dev/null -w "%{http_code}" https://nexus.gswack.com/v2/)
-      #       echo "Nexus returned HTTP $STATUS"
-
-      #       if [ "$STATUS" != "401" ]; then
-      #         echo "Unexpected Nexus response"
-      #         exit 1
-      #       fi
-
-      # - name: Login to Nexus Docker Registry
-      #   run: |
-      #     docker login "${NEXUS_REGISTRY}" \
-      #     --username "${NEXUS_USERNAME}" \
-      #     --password "${NEXUS_PASSWORD}"
-      #   env:
-      #     NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
-      #     NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
-      #     NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
+      - name: Login to Nexus Docker Registry
+        run: |
+          docker login "${NEXUS_REGISTRY}" \
+          --username "${NEXUS_USERNAME}" \
+          --password "${NEXUS_PASSWORD}"
+        env:
+          NEXUS_USERNAME: ${{ secrets.NEXUS_USERNAME }}
+          NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+          NEXUS_REGISTRY: ${{ secrets.NEXUS_REGISTRY }}
 
       - name: Build Docker image
         run: |
