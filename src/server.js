@@ -25,15 +25,6 @@ console.log(require("./routes/reservations"));
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection - using environment variable for the connection string
-console.log("MongoDB URI loaded from OpenBao");
-// // mongoose.connect(process.env.MONGO_URI)
-//   .then(() => console.log("MongoDB connected"))
-//   .catch((err) => {
-//     console.error("MongoDB connection failed:", err);
-//     process.exit(1);
-//   });
-
 // MongoDB connection from Vault secret
 const mongoSecretPath = "/vault/secrets/mongo-uri";
 if (!fs.existsSync(mongoSecretPath)) {
@@ -68,7 +59,7 @@ const logger = winston.createLogger({
             labels: {
                 app: "express-app"
             },
-            json: true,
+            // json: true,
             batching: false
         })
     ]
