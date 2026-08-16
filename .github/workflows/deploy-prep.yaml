@@ -21,26 +21,10 @@ jobs:
           ref: dev
           path: infra-repo
 
-      # - name: Verify image exists in Nexus
-      #   shell: powershell
-      #   run: |
-      #     $tag = "${{ github.event.workflow_run.head_sha }}"
-
-      #     $result = curl.exe `
-      #       -u "${{ secrets.NEXUS_USERNAME }}:${{ secrets.NEXUS_PASSWORD }}" `
-      #       http://localhost:8082/v2/frontend/tags/list
-
-      #     if ($result -notmatch $tag) {
-      #         throw "Image frontend:$tag does not exist in Nexus"
-      #     }
-
-      #     Write-Host "Image frontend:$tag exists in Nexus"
-
       - name: Get image tag
         id: tag
         run: |
           echo "tag=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
-        # echo "tag=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
 
       - name: Show tag
         run: |
@@ -78,14 +62,6 @@ jobs:
         run: |
           # using the GitHub CLI to create a pull request
           gh pr create --repo gswack/infra-repo --base main --head dev --title "Deploy backend ${{ steps.tag.outputs.tag }}" --body "Automated PR: update backend image tag to ${{ steps.tag.outputs.tag }}"
-        #       uses: repo-sync/pull-request@v2
-        # with:
-        #   source_branch: dev
-        #   destination_branch: main
-        #   pr_title: "Deploy backend ${{ steps.tag.outputs.tag }}"
-        #   pr_body: "Automated PR: update backend image tag to ${{ steps.tag.outputs.tag }}"
-        #   github_token: ${{ secrets.PIPELINE_TOKEN }}
-          # pr_repository: gswack/infra-repo
 
       - name: Auto-merge Pull Request
         env:
