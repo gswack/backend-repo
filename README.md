@@ -1,4 +1,4 @@
-# Hotel Booking Backend API
+# Hotel Booking Platform - Backend API
 
 Backend service for the Hotel Booking platform.
 
