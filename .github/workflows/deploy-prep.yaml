@@ -24,7 +24,11 @@ jobs:
       - name: Get image tag
         id: tag
         run: |
+<<<<<<< HEAD
           echo "tag=v${{ github.event.workflow_run.run_number }}" >> $GITHUB_OUTPUT
+=======
+          echo "tag=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
+>>>>>>> dev
 
       - name: Show tag
         run: |
